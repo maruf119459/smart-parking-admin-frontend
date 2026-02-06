@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import SystemManagement from "./pages/SystemManagement";
 import AdminManagement from "./pages/AdminManagement";
+import CustomerService from "./pages/CustomerService";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/system-management" element={<PrivateRoute> <SystemManagement /> </PrivateRoute>} />
          
           <Route path="/AdminManagement" element={<PrivateRoute> <AdminManagement /> </PrivateRoute>} />
+          <Route path="/customer-service" element={<PrivateRoute> <CustomerService /> </PrivateRoute>} />
          
         </Routes>
       </BrowserRouter>
