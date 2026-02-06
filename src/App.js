@@ -6,6 +6,7 @@ import PrivateRoute from "./routes/PrivateRoute";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import AdminManagement from "./pages/AdminManagement";
+import CustomerService from "./pages/CustomerService";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/forgot-password" element={<PublicRoute> <ForgotPassword /></PublicRoute>} />
          
           <Route path="/AdminManagement" element={<PrivateRoute> <AdminManagement /> </PrivateRoute>} />
+          <Route path="/customer-service" element={<PrivateRoute> <CustomerService /> </PrivateRoute>} />
          
         </Routes>
       </BrowserRouter>
