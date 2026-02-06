@@ -5,6 +5,8 @@ import PrivateRoute from "./routes/PrivateRoute";
 
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import SystemManagement from "./pages/SystemManagement";
 import AdminManagement from "./pages/AdminManagement";
 
 function App() {
@@ -17,6 +19,9 @@ function App() {
           <Route path="/register" element={<PublicRoute> <Register /> </PublicRoute>} />
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/forgot-password" element={<PublicRoute> <ForgotPassword /></PublicRoute>} />
+
+          
+          <Route path="/system-management" element={<PrivateRoute> <SystemManagement /> </PrivateRoute>} />
          
           <Route path="/AdminManagement" element={<PrivateRoute> <AdminManagement /> </PrivateRoute>} />
          
