@@ -16,7 +16,6 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Navbar></Navbar>
-        <Navbar></Navbar>
 
         <Routes>
           <Route path="/register" element={<PublicRoute> <Register /> </PublicRoute>} />
