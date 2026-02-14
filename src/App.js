@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from './context/AuthContext';
+import Navbar from "./components/Navbar";
 import PublicRoute from "./routes/PublicRoute";
 import PrivateRoute from "./routes/PrivateRoute";
 
@@ -14,6 +15,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <Navbar></Navbar>
         <Navbar></Navbar>
 
         <Routes>
