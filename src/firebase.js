@@ -7,5 +7,8 @@ const firebaseConfig = {
   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
 };
 
+console.log("API KEY:", process.env.REACT_APP_FIREBASE_API_KEY);
+
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
