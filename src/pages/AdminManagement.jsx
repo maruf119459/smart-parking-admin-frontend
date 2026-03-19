@@ -5,11 +5,15 @@ import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
 import { Trash2, UserPlus, Users, Phone, Mail, User } from "lucide-react";
 import "react-toastify/dist/ReactToastify.css";
+import logo from "../assets/loading_img.png";
+import { BounceLoader } from "react-spinners";
 
 export default function AdminManagement() {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const [initialPageLoad, setInitialPageLoad] = useState(true);
+
 
   const [form, setForm] = useState({
     name: "",
@@ -24,10 +28,14 @@ export default function AdminManagement() {
 
   const fetchAdmins = async () => {
     try {
+      setInitialPageLoad(true);
       const res = await axios.get("http://localhost:5000/api/admin");
       setAdmins(res.data);
     } catch (err) {
       toast.error("Failed to load admin list");
+    }
+    finally {
+      setInitialPageLoad(false);
     }
   };
 
@@ -38,7 +46,7 @@ export default function AdminManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isFormValid) return;
-    
+
     setLoading(true);
     try {
       await axios.post("http://localhost:5000/api/admin", form);
@@ -81,10 +89,19 @@ export default function AdminManagement() {
     });
   };
 
+  if (initialPageLoad) {
+    return (
+      <div style={{ height: "80vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+        <img src={logo} alt="Logo" style={{ width: "220px", marginBottom: "20px" }} />
+        <BounceLoader color="#6199ff" size={50} />
+      </div>
+    );
+  }
+
   return (
     <div className="container py-4" style={{ maxWidth: "1000px" }}>
       <ToastContainer position="top-right" autoClose={3000} />
-      
+
       <div className="d-flex align-items-center gap-2 mb-4">
         <Users className="text-primary" size={28} />
         <h2 className="fw-bold m-0" style={{ color: "#2c3e50" }}>Admin Management</h2>
@@ -98,12 +115,12 @@ export default function AdminManagement() {
               <UserPlus className="text-primary" size={20} />
               <h5 className="fw-bold m-0">Add New Admin</h5>
             </div>
-            
+
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label className="form-label small fw-bold text-muted">Full Name</label>
                 <div className="input-group">
-                  <span className="input-group-text bg-light border-end-0"><User size={16}/></span>
+                  <span className="input-group-text bg-light border-end-0"><User size={16} /></span>
                   <input
                     type="text"
                     className="form-control bg-light border-start-0 shadow-none"
@@ -118,7 +135,7 @@ export default function AdminManagement() {
               <div className="mb-3">
                 <label className="form-label small fw-bold text-muted">Email Address</label>
                 <div className="input-group">
-                  <span className="input-group-text bg-light border-end-0"><Mail size={16}/></span>
+                  <span className="input-group-text bg-light border-end-0"><Mail size={16} /></span>
                   <input
                     type="email"
                     className="form-control bg-light border-start-0 shadow-none"
@@ -133,7 +150,7 @@ export default function AdminManagement() {
               <div className="mb-4">
                 <label className="form-label small fw-bold text-muted">Phone Number</label>
                 <div className="input-group">
-                  <span className="input-group-text bg-light border-end-0"><Phone size={16}/></span>
+                  <span className="input-group-text bg-light border-end-0"><Phone size={16} /></span>
                   <input
                     type="text"
                     className="form-control bg-light border-start-0 shadow-none"
@@ -150,8 +167,8 @@ export default function AdminManagement() {
                 )}
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-primary w-100 fw-bold py-2 shadow-sm rounded-3"
                 disabled={loading || !isFormValid}
               >
@@ -182,7 +199,7 @@ export default function AdminManagement() {
                   ) : (
                     admins.map((admin, index) => {
                       const isProtected = admin.role === "super" || user?.email === admin.email;
-                      
+
                       return (
                         <tr key={admin._id}>
                           <td className="px-4 text-muted small">{index + 1}</td>
@@ -197,15 +214,15 @@ export default function AdminManagement() {
                               className="btn btn-sm p-2 border-0"
                               onClick={() => handleDelete(admin._id, admin.email, admin.role)}
                               disabled={isProtected}
-                              style={{ 
+                              style={{
                                 color: isProtected ? "#dee2e6" : "#dc3545",
                                 transition: "0.2s"
                               }}
                               title={
-                                admin.role === "super" 
-                                  ? "Protected Role" 
-                                  : user?.email === admin.email 
-                                    ? "Your Account" 
+                                admin.role === "super"
+                                  ? "Protected Role"
+                                  : user?.email === admin.email
+                                    ? "Your Account"
                                     : "Delete Admin"
                               }
                             >
