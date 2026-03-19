@@ -5,12 +5,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import logo from "../assets/loading_img.png";
 import { BounceLoader } from "react-spinners"; 
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [initialPageLoad, setInitialPageLoad] = useState(true); 
+  const [showPass, setShowPass] = useState(false);
 
   const navigate = useNavigate();
 
@@ -80,13 +82,19 @@ export default function Login() {
 
           <div className="mb-4">
             <label className="form-label fw-bold">Enter your password</label>
-            <input 
-              type="password" 
-              className="form-control form-control-lg border shadow-sm" 
-              placeholder="************"
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
+            
+            <div className="position-relative">
+                <input 
+                  type={showPass ? "text" : "password"} 
+                  className="form-control form-control-lg" 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} 
+                  required 
+                />
+                <span className="position-absolute end-0 top-50 translate-middle-y me-3 cursor-pointer" onClick={() => setShowPass(!showPass)}>
+                  {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
+                </span>
+              </div>
             <div className="text-end mt-2">
               <Link to="/forgot-password" className="text-decoration-none small fw-bold">Forgot password?</Link>
             </div>
