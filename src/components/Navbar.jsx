@@ -69,7 +69,7 @@ export default function Navbar() {
             {!user && (
               <div className="d-flex gap-3">
                 <Link to="/login" className="text-decoration-none fw-bold">Login</Link>
-                <Link to="/register" className="text-decoration-none text-muted">Register</Link>
+                <Link to="/register" className="text-decoration-none text-muted">Sign Up</Link>
               </div>
             )}
           </div>
