@@ -7,13 +7,16 @@ import { Trash2, UserPlus, Users, Phone, Mail, User } from "lucide-react";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../assets/loading_img.png";
 import { BounceLoader } from "react-spinners";
+import { io } from "socket.io-client"; 
+
+// Initialize socket 
+const socket = io("http://localhost:5000");
 
 export default function AdminManagement() {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const [initialPageLoad, setInitialPageLoad] = useState(true);
-
 
   const [form, setForm] = useState({
     name: "",
@@ -28,19 +31,25 @@ export default function AdminManagement() {
 
   const fetchAdmins = async () => {
     try {
-      setInitialPageLoad(true);
       const res = await axios.get("http://localhost:5000/api/admin");
       setAdmins(res.data);
     } catch (err) {
       toast.error("Failed to load admin list");
-    }
-    finally {
-      setInitialPageLoad(false);
+    } finally {
+      setTimeout(() => setInitialPageLoad(false), 800);
     }
   };
 
   useEffect(() => {
     fetchAdmins();
+
+    socket.on("adminUpdated", () => {
+      fetchAdmins();
+    });
+
+    return () => {
+      socket.off("adminUpdated");
+    };
   }, []);
 
   const handleSubmit = async (e) => {
@@ -108,7 +117,6 @@ export default function AdminManagement() {
       </div>
 
       <div className="row g-4">
-        {/* Left Side: Add Form */}
         <div className="col-lg-4">
           <div className="card border-0 shadow-sm p-4 rounded-4 sticky-top" style={{ top: "90px" }}>
             <div className="d-flex align-items-center gap-2 mb-3">
@@ -178,7 +186,6 @@ export default function AdminManagement() {
           </div>
         </div>
 
-        {/* Right Side: Admin List */}
         <div className="col-lg-8">
           <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
             <div className="table-responsive">
