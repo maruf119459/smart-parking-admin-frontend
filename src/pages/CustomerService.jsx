@@ -48,66 +48,94 @@ export default function CustomerService() {
 
   const downloadFullReport = () => {
     if (results.length === 0) return toast.warn("No data available to download");
-    
+
     const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text("City Parking - Full Customer Report", 14, 20);
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // 1. Add Logo and Title (Centered)
+    // Parameters: image, type, x, y, width, height
+    doc.addImage(logo, "PNG", 14, 12, 25, 18);
+
+    doc.setFontSize(20);
+    doc.setTextColor(44, 62, 80); // Dark Blue-Grey
+    doc.text("City Parking - Full Customer Report", pageWidth / 2, 22, { align: "center" });
+
+    // 2. Sub-header Info (Centered)
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text(`Customer: ${email}`, 14, 28);
-    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 34);
-    doc.text(`Search Period: ${from} to ${to}. (Date Formate: YYYY-MM-DD)`, 14, 40);
+    doc.text(`Customer Email: ${email}`, pageWidth / 2, 30, { align: "center" });
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, pageWidth / 2, 36, { align: "center" });
 
-    let finalY = 40;
+    const dateRangeLine = `Search Period: ${from || "All"} to ${to || "Present"}. (Date Format: YYYY-MM-DD)`;
+    doc.text(dateRangeLine, pageWidth / 2, 42, { align: "center" });
+
+    // 3. Spacing (Moving the start point down to provide 2 line spaces)
+    let finalY = 55;
 
     results.forEach((record, index) => {
-      const startY = index === 0 ? 45 : finalY + 20;
-      
-      if (startY > 250) {
+      // Check for page overflow
+      if (finalY > 240) {
         doc.addPage();
-        finalY = 20; // Reset Y for new page
-      } else {
-        finalY = startY;
+        finalY = 20;
       }
 
       doc.setTextColor(0);
       doc.setFontSize(12);
-      doc.text(`Record #${index + 1}: Booking ID ${record.parkingId.slice(-6).toUpperCase()}`, 14, finalY);
+      doc.setFont("helvetica", "bold");
+      doc.text(
+        `Record #${index + 1}: Booking ID ${record.parkingId.slice(-6).toUpperCase()}`,
+        14,
+        finalY
+      );
 
       const infoData = [
         ["Vehicle", record.vehicleType, "Slot", record.slotNumber || "N/A"],
         ["Booking Time", new Date(record.bookingTime).toLocaleString(), "Status", record.parkingStatus],
       ];
 
-      // Using autoTable directly as a function to avoid the "not a function" error
       autoTable(doc, {
         startY: finalY + 5,
         body: infoData,
         theme: 'grid',
-        styles: { fontSize: 9 },
+        styles: { fontSize: 9, font: "helvetica" },
+        columnStyles: {
+          0: { fontStyle: 'bold', fillColor: [245, 245, 245] },
+          2: { fontStyle: 'bold', fillColor: [245, 245, 245] }
+        }
       });
 
       const paymentRows = record.payments.map(p => [
         p.transactionId,
         `BDT ${p.amount}`,
         p.status,
+        p.bankName || "-",
+        p.accountType || "-",
         new Date(p.createdAt).toLocaleString()
       ]);
 
+      // Add Summary Row
       paymentRows.push([
-        { content: "Total Successful Paid", colSpan: 1, styles: { fontStyle: 'bold', fillColor: [240, 240, 240] } },
-        { content: `BDT ${calculateTotalPaid(record.payments)}`, colSpan: 3, styles: { fontStyle: 'bold', fillColor: [240, 240, 240] } }
+        {
+          content: "Total Successful Paid",
+          colSpan: 1,
+          styles: { fontStyle: 'bold', fillColor: [230, 240, 255] }
+        },
+        {
+          content: `BDT ${calculateTotalPaid(record.payments)}`,
+          colSpan: 5,
+          styles: { fontStyle: 'bold', fillColor: [230, 240, 255] }
+        }
       ]);
 
       autoTable(doc, {
-        startY: doc.lastAutoTable.finalY + 5,
-        head: [["Txn ID", "Amount", "Status", "Date"]],
+        startY: doc.lastAutoTable.finalY + 2,
+        head: [["Txn ID", "Amount", "Status", "Bank Name", "ACC. Type", "Date"]],
         body: paymentRows,
         headStyles: { fillColor: [41, 128, 185] },
         styles: { fontSize: 8 },
       });
 
-      finalY = doc.lastAutoTable.finalY;
+      finalY = doc.lastAutoTable.finalY + 15; // Space between records
     });
 
     doc.save(`Full_Report_${email}.pdf`);
@@ -126,7 +154,7 @@ export default function CustomerService() {
   return (
     <div className="container py-4" style={{ maxWidth: "1100px", fontFamily: "sans-serif" }}>
       <ToastContainer position="top-right" />
-      
+
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div className="d-flex align-items-center gap-2">
           <Search className="text-primary" size={28} />
@@ -144,7 +172,7 @@ export default function CustomerService() {
           <div className="col-md-4">
             <label className="form-label small fw-bold text-muted">Customer Email</label>
             <div className="input-group">
-              <span className="input-group-text bg-light border-end-0"><Mail size={16}/></span>
+              <span className="input-group-text bg-light border-end-0"><Mail size={16} /></span>
               <input
                 className="form-control bg-light border-start-0 shadow-none"
                 placeholder="search@customer.com"
@@ -156,14 +184,14 @@ export default function CustomerService() {
           <div className="col-md-3">
             <label className="form-label small fw-bold text-muted">From Date</label>
             <div className="input-group">
-              <span className="input-group-text bg-light border-end-0"><Calendar size={16}/></span>
+              <span className="input-group-text bg-light border-end-0"><Calendar size={16} /></span>
               <input type="date" className="form-control bg-light border-start-0 shadow-none" value={from} onChange={(e) => setFrom(e.target.value)} />
             </div>
           </div>
           <div className="col-md-3">
             <label className="form-label small fw-bold text-muted">To Date</label>
             <div className="input-group">
-              <span className="input-group-text bg-light border-end-0"><Calendar size={16}/></span>
+              <span className="input-group-text bg-light border-end-0"><Calendar size={16} /></span>
               <input type="date" className="form-control bg-light border-start-0 shadow-none" value={to} onChange={(e) => setTo(e.target.value)} />
             </div>
           </div>
@@ -218,15 +246,15 @@ export default function CustomerService() {
             </div>
 
             <div className="row g-4 mb-4 bg-light p-3 rounded-3 mx-1">
-                <div className="col-md-4 small"><Clock size={14} className="me-1"/> <b>Booking:</b> {new Date(r.bookingTime).toLocaleString()}</div>
-                <div className="col-md-4 small"><Clock size={14} className="me-1"/> <b>Entry:</b> {r.entryTime ? new Date(r.entryTime).toLocaleString() : "N/A"}</div>
-                <div className="col-md-4 small"><Clock size={14} className="me-1"/> <b>Exit:</b> {r.exitTime ? new Date(r.exitTime).toLocaleString() : "N/A"}</div>
+              <div className="col-md-4 small"><Clock size={14} className="me-1" /> <b>Booking:</b> {new Date(r.bookingTime).toLocaleString()}</div>
+              <div className="col-md-4 small"><Clock size={14} className="me-1" /> <b>Entry:</b> {r.entryTime ? new Date(r.entryTime).toLocaleString() : "N/A"}</div>
+              <div className="col-md-4 small"><Clock size={14} className="me-1" /> <b>Exit:</b> {r.exitTime ? new Date(r.exitTime).toLocaleString() : "N/A"}</div>
             </div>
 
             <h6 className="fw-bold mb-3 d-flex align-items-center gap-2 mt-4">
               <FileText size={18} className="text-muted" /> Payment History
             </h6>
-            
+
             <div className="table-responsive">
               <table className="table table-bordered align-middle">
                 <thead className="table-light">
@@ -234,6 +262,8 @@ export default function CustomerService() {
                     <th>Transaction ID</th>
                     <th>Amount</th>
                     <th>Status</th>
+                    <th>Bank Name</th>
+                    <th>Acc. Type</th>
                     <th>Date & Time</th>
                   </tr>
                 </thead>
@@ -248,15 +278,17 @@ export default function CustomerService() {
                           <td className="fw-bold">৳ {p.amount ?? "-"}</td>
                           <td>
                             <span className={`badge rounded-pill ${p.status?.toLowerCase() === 'success' ? 'bg-success' : 'bg-danger'}`}>
-                                {p.status}
+                              {p.status}
                             </span>
                           </td>
+                          <td>{p.bankName || "-"}</td>
+                          <td>{p.accountType || "-"}</td>
                           <td>{new Date(p.createdAt).toLocaleString()}</td>
                         </tr>
                       ))}
                       <tr className="table-primary">
                         <td className="fw-bold text-end">Total Successfully Paid:</td>
-                        <td className="fw-bold text-primary" colSpan="3">৳ {calculateTotalPaid(r.payments)}</td>
+                        <td className="fw-bold text-primary" colSpan="5">৳ {calculateTotalPaid(r.payments)}</td>
                       </tr>
                     </>
                   )}
