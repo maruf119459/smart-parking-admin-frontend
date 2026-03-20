@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import { Search, Download, TrendingUp, Clock } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
-  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area 
+  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, Legend
 } from "recharts";
 import logo from "../assets/loading_img.png";
 import { BounceLoader } from "react-spinners";
@@ -14,33 +14,34 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#82ca9d"
 const BASE_URL = "http://localhost:5000/api/admin/analytics";
 
 export default function InteractiveDashboard() {
-  const [range, setRange] = useState({ from: "", to: "" });
+  const getFormattedDate = (date) => date.toISOString().split("T")[0];
+
+  const today = new Date();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(today.getDate() - 6);
+
+  const [range, setRange] = useState({ 
+    from: getFormattedDate(sevenDaysAgo), 
+    to: getFormattedDate(today) 
+  });
+  
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [initialPageLoad, setInitialPageLoad] = useState(true);
 
-  const fetchData = useCallback(async (isInitial = false) => {
+  const fetchData = useCallback(async (isInitial = false, customRange = null) => {
     if (!isInitial) setLoading(true);
     
-    const params = {
-      from: range.from || undefined,
-      to: range.to || undefined
+    // Use customRange if provided (for initial load), otherwise use state
+    const activeRange = customRange || range;
+    
+    const params = { 
+      from: activeRange.from || undefined, 
+      to: activeRange.to || undefined 
     };
 
     try {
-      // Parallel execution of separate API endpoints
-      const [
-        usersData,
-        revenueData,
-        parkingStatus,
-        incomeByVehicle,
-        peakHours,
-        popularSlots,
-        paymentMethods,
-        paymentStats,
-        topCustomers,
-        summary
-      ] = await Promise.all([
+      const [u, r, ps, iv, ph, sl, pm, pst, tc, sm] = await Promise.all([
         axios.get(`${BASE_URL}/users`, { params }),
         axios.get(`${BASE_URL}/revenue`, { params }),
         axios.get(`${BASE_URL}/parking-status`, { params }),
@@ -54,41 +55,81 @@ export default function InteractiveDashboard() {
       ]);
 
       setData({
-        usersData: usersData.data,
-        revenueData: revenueData.data,
-        parkingStatus: parkingStatus.data,
-        incomeByVehicle: incomeByVehicle.data,
-        peakHours: peakHours.data,
-        popularSlots: popularSlots.data,
-        paymentMethods: paymentMethods.data,
-        paymentStats: paymentStats.data,
-        topCustomers: topCustomers.data,
-        summary: summary.data
+        usersData: u.data, revenueData: r.data, parkingStatus: ps.data,
+        incomeByVehicle: iv.data, peakHours: ph.data, popularSlots: sl.data,
+        paymentMethods: pm.data, paymentStats: pst.data, topCustomers: tc.data,
+        summary: sm.data
       });
-
-    } catch (err) {
-      console.error("Dashboard Fetch Error:", err);
-    } finally {
-      setLoading(false);
-      if (isInitial) setInitialPageLoad(false);
+    } catch (err) { 
+        console.error("Dashboard Fetch Error:", err); 
+    } finally { 
+        setLoading(false); 
+        if (isInitial) setInitialPageLoad(false); 
     }
   }, [range]);
 
-  useEffect(() => {
-    fetchData(true);
+  // Initial load effect
+  useEffect(() => { 
+    fetchData(true, { 
+        from: getFormattedDate(sevenDaysAgo), 
+        to: getFormattedDate(today) 
+    }); 
   }, []);
 
-  console.log("Payment Methods Data:", data?.paymentMethods);
+  const formatHour = (hour) => {
+    const h = parseInt(hour);
+    if (h === 0) return "12 AM";
+    if (h === 12) return "12 PM";
+    return h > 12 ? `${h - 12} PM` : `${h} AM`;
+  };
 
+  console.log("Dashboard Data:", data?.incomeByVehicle);
   const downloadFullReport = async () => {
     const element = document.getElementById("dashboard-content");
     const canvas = await html2canvas(element, { scale: 2 });
     const imgData = canvas.toDataURL("image/png");
+    
     const pdf = new jsPDF("p", "mm", "a4");
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("Business_Report.pdf");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentWidth = pageWidth - (margin * 2);
+
+    // 1. Add Logo and Title (Centered)
+    const logoWidth = 30;
+    const logoHeight = 15;
+    pdf.addImage(logo, "PNG", (pageWidth / 2) - (logoWidth / 2), 10, logoWidth, logoHeight);
+
+    pdf.setFontSize(20);
+    pdf.setTextColor(44, 62, 80); 
+    pdf.setFont("helvetica", "bold");
+    pdf.text("BUSINESS ANALYTICS REPORT", pageWidth / 2, 32, { align: "center" });
+
+    // 2. Sub-header Info (Centered)
+    pdf.setFontSize(10);
+    pdf.setTextColor(100);
+    pdf.setFont("helvetica", "normal");
+    
+    const rangeText = `Date Range: ${range.from} to ${range.to}`;
+    const generatedText = `Generated on: ${new Date().toLocaleString()}`;
+    
+    pdf.text(rangeText, pageWidth / 2, 40, { align: "center" });
+    pdf.text(generatedText, pageWidth / 2, 46, { align: "center" });
+
+    // 3. Dashboard Image (The charts)
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgHeight = (imgProps.height * contentWidth) / imgProps.width;
+    
+    // Starting the image at Y=55 to allow space for centered header
+    pdf.addImage(imgData, "PNG", margin, 55, contentWidth, imgHeight);
+
+    // 4. Footer
+    const year = new Date().getFullYear();
+    pdf.setFontSize(9);
+    pdf.setTextColor(150);
+    pdf.text(`cityparking @ ${year}`, pageWidth / 2, pageHeight - 10, { align: "center" });
+
+    pdf.save(`Business_Report_${range.from}_to_${range.to}.pdf`);
   };
 
   if (initialPageLoad) {
@@ -107,7 +148,6 @@ export default function InteractiveDashboard() {
         <h4 className="fw-bold m-0 text-dark">
           <TrendingUp className="me-2 text-primary" size={24}/>Business Analytics
         </h4>
-        
         <div className="d-flex align-items-center gap-2">
           <div className="input-group input-group-sm">
             <span className="input-group-text bg-white">From</span>
@@ -126,75 +166,79 @@ export default function InteractiveDashboard() {
         </div>
       </div>
 
-      <div id="dashboard-content" className="row g-4">
-        {/* ROW 1: USER GROWTH & STATUS */}
+      <div id="dashboard-content" className="row g-4 p-2 mt-2 bg-white">
+        {/* ROW 1 */}
         <ChartCard title="User Registration Trend" md={8}>
           <AreaChart data={data?.usersData}>
             <XAxis dataKey="_id" tick={{fontSize: 10}}/>
-            <YAxis tick={{fontSize: 10}}/>
+            <YAxis label={{ value: 'New Users', angle: -90, position: 'insideLeft', fontSize: 12 }} />
             <Tooltip />
             <Area type="monotone" dataKey="count" fill="#8884d8" stroke="#8884d8" fillOpacity={0.3} />
           </AreaChart>
         </ChartCard>
         
-        <ChartCard title="Current Parking Distribution" md={4}>
+        <ChartCard title="Parking Status" md={4}>
           <PieChart>
-            <Pie data={data?.parkingStatus} dataKey="value" nameKey="_id" cx="50%" cy="50%" outerRadius={80} label>
+            <Pie data={data?.parkingStatus} dataKey="value" nameKey="_id" cx="50%" cy="50%" outerRadius={80}>
               {data?.parkingStatus?.map((entry, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
             </Pie>
             <Tooltip />
+            <Legend verticalAlign="top" align="right" layout="vertical" wrapperStyle={{fontSize: '11px'}}/>
           </PieChart>
         </ChartCard>
 
-        {/* ROW 2: REVENUE TIMELINE & VEHICLE SPLIT */}
-        <ChartCard title="Revenue Growth (Success Payments)" md={8}>
+        {/* ROW 2 */}
+        <ChartCard title="Revenue Growth" md={8}>
           <LineChart data={data?.revenueData}>
             <XAxis dataKey="_id" tick={{fontSize: 10}}/>
-            <YAxis tick={{fontSize: 10}}/>
+            <YAxis tick={{fontSize: 10}} label={{ value: 'Amount ($)', angle: -90, position: 'insideLeft' }}/>
             <Tooltip />
             <Line type="monotone" dataKey="total" stroke="#0088FE" strokeWidth={3} dot={{r: 4}} />
           </LineChart>
         </ChartCard>
 
-        <ChartCard title="Income by Vehicle Type" md={4}>
+        <ChartCard title="Income by Vehicle" md={4}>
           <PieChart>
-            <Pie data={data?.incomeByVehicle} dataKey="value" nameKey="_id" innerRadius={50} outerRadius={80} paddingAngle={5}>
+            <Pie data={data?.incomeByVehicle} dataKey="value" nameKey="_id" innerRadius={50} outerRadius={80}>
               {data?.incomeByVehicle?.map((entry, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
             </Pie>
             <Tooltip />
+            <Legend verticalAlign="top" align="right" layout="vertical" wrapperStyle={{fontSize: '11px'}}/>
           </PieChart>
         </ChartCard>
 
-        {/* ROW 3: PEAK HOURS & POPULAR SLOTS */}
+        {/* ROW 3 */}
         <ChartCard title="Peak Occupancy Hours (24h)" md={6}>
           <BarChart data={data?.peakHours}>
-            <XAxis dataKey="_id" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="count" fill="#FFBB28" radius={[4, 4, 0, 0]} />
+            <XAxis dataKey="_id" tickFormatter={formatHour} tick={{fontSize: 9}} interval={1}/>
+            <YAxis label={{ value: 'Cars', angle: -90, position: 'insideLeft' }}/>
+            <Tooltip labelFormatter={formatHour}/>
+            <Bar dataKey="count" fill="#00C49F" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ChartCard>
 
-        <ChartCard title="Top 10 High-Demand Slots" md={6}>
-          <BarChart layout="vertical" data={data?.popularSlots}>
-            <XAxis type="number" hide/>
-            <YAxis dataKey="_id" type="category" width={80} tick={{fontSize: 10}}/>
-            <Tooltip />
-            <Bar dataKey="count" fill="#82ca9d" radius={[0, 4, 4, 0]} />
-          </BarChart>
-        </ChartCard>
+        <div className="col-md-6">
+          <div className="card border-0 shadow-sm p-4 text-center rounded-4 h-100 justify-content-center">
+            <Clock className="mx-auto mb-2 text-primary" size={40}/>
+            <h6 className="text-muted fw-bold">Avg. Parking Session</h6>
+            <h2 className="fw-bold text-dark">{data?.summary?.avgDuration?.toFixed(1) || 0} Min</h2>
+            <hr />
+            <div className="badge bg-success-subtle text-success p-2">Live Occupancy: {data?.summary?.liveOccupancy || 0}</div>
+          </div>
+        </div>
 
-        {/* ROW 4: PAYMENTS & TOP USERS */}
+        {/* ROW 4 */}
         <ChartCard title="Payment Method Popularity" md={4}>
           <PieChart>
-            <Pie data={data?.paymentMethods} dataKey="count" nameKey="_id" outerRadius={70}>
+            <Pie data={data?.paymentMethods} dataKey="value" nameKey="_id" outerRadius={80}>
               {data?.paymentMethods?.map((entry, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
             </Pie>
             <Tooltip />
+            <Legend verticalAlign="top" align="right" layout="vertical" wrapperStyle={{fontSize: '11px'}}/>
           </PieChart>
         </ChartCard>
 
-        <ChartCard title="Transaction Status Ratio" md={4}>
+        <ChartCard title="Transaction Status" md={4}>
           <BarChart data={data?.paymentStats}>
             <XAxis dataKey="_id" />
             <YAxis />
@@ -207,27 +251,20 @@ export default function InteractiveDashboard() {
           </BarChart>
         </ChartCard>
 
-        <ChartCard title="Top 5 High-Value Customers" md={4}>
-          <BarChart data={data?.topCustomers}>
-            <XAxis dataKey="_id" hide />
+        <ChartCard title="Top 5 Customers" md={4}>
+          <BarChart data={data?.topCustomers} margin={{ bottom: 45 }}>
+            <XAxis 
+                dataKey="_id" 
+                interval={0} 
+                angle={-45} 
+                textAnchor="end" 
+                tick={{fontSize: 10, fontWeight: 'bold'}}
+            />
             <YAxis />
-            <Tooltip labelStyle={{fontSize: '10px'}}/>
-            <Bar dataKey="total" fill="#0d6efd" />
+            <Tooltip />
+            <Bar dataKey="total" fill="#0d6efd" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ChartCard>
-
-        {/* METRIC CARD */}
-        <div className="col-md-4">
-          <div className="card border-0 shadow-sm p-4 text-center rounded-4 h-100 justify-content-center">
-            <Clock className="mx-auto mb-2 text-primary" size={40}/>
-            <h6 className="text-muted fw-bold">Avg. Parking Session</h6>
-            <h2 className="fw-bold text-dark">{data?.summary?.avgDuration?.toFixed(1) || 0} Min</h2>
-            <hr />
-            <div className="badge bg-success-subtle text-success p-2">
-              Live Occupancy: {data?.summary?.liveOccupancy || 0}
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -236,9 +273,9 @@ export default function InteractiveDashboard() {
 function ChartCard({ title, children, md }) {
   return (
     <div className={`col-md-${md}`}>
-      <div className="card border-0 shadow-sm p-3 rounded-4" style={{ minHeight: "350px" }}>
-        <h6 className="fw-bold mb-3 text-muted" style={{ fontSize: "13px", textTransform: "uppercase" }}>{title}</h6>
-        <ResponsiveContainer width="100%" height={280}>
+      <div className="card border-0 shadow-sm p-3 rounded-4" style={{ minHeight: "380px" }}>
+        <h6 className="fw-bold mb-3 text-muted" style={{ fontSize: "12px", textTransform: "uppercase" }}>{title}</h6>
+        <ResponsiveContainer width="100%" height={300}>
           {children}
         </ResponsiveContainer>
       </div>
