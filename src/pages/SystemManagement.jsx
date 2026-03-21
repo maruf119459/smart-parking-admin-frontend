@@ -253,7 +253,6 @@ export default function SystemManagement() {
           <h3 className="fw-bold text-dark d-flex align-items-center gap-2">
             <Settings className="text-primary" /> System Configuration
           </h3>
-          <p className="text-muted">Manage vehicle pricing and parking infrastructure.</p>
         </div>
 
         <div className="row g-4">

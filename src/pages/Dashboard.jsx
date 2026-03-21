@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-import { Search, Download, TrendingUp, Clock } from "lucide-react";
+import { Search, Download, TrendingUp, Clock, Calendar } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, Legend
@@ -141,6 +141,8 @@ export default function InteractiveDashboard() {
       </div>
     );
   }
+    console.log("Dashboard Rendered with Data:", data);
+
 
   return (
     <>
@@ -149,25 +151,39 @@ export default function InteractiveDashboard() {
       </Helmet>
       <div className="container-fluid bg-light min-vh-100 py-4">
         {/* HEADER & SEARCH */}
-        <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 bg-white p-3 rounded-4 shadow-sm gap-3">
-          <h4 className="fw-bold m-0 text-dark">
-            <TrendingUp className="me-2 text-primary" size={24} />Business Analytics
-          </h4>
+        <div className="d-flex justify-content-between align-items-center mb-4">
           <div className="d-flex align-items-center gap-2">
-            <div className="input-group input-group-sm">
-              <span className="input-group-text bg-white">From</span>
-              <input type="date" className="form-control" value={range.from} onChange={(e) => setRange({ ...range, from: e.target.value })} />
+            <TrendingUp className="text-primary" size={28} />
+            <h2 className="fw-bold m-0" style={{ color: "#2c3e50" }}>Business Analytics</h2>
+          </div>
+        </div>
+
+        <div className="card border-0 shadow-sm p-4 rounded-4 mb-5 bg-white">
+          <div className="row g-3 align-items-end">
+            <div className="col-md-3">
+              <label className="form-label small fw-bold text-muted">From Date</label>
+              <div className="input-group">
+                <span className="input-group-text bg-light border-end-0"><Calendar size={16} /></span>
+                <input type="date" className="form-control bg-light border-start-0 shadow-none" value={range.from} onChange={(e) => setRange({ ...range, from: e.target.value })} />
+              </div>
             </div>
-            <div className="input-group input-group-sm">
-              <span className="input-group-text bg-white">To</span>
-              <input type="date" className="form-control" value={range.to} onChange={(e) => setRange({ ...range, to: e.target.value })} />
+            <div className="col-md-3">
+              <label className="form-label small fw-bold text-muted">To Date</label>
+              <div className="input-group">
+                <span className="input-group-text bg-light border-end-0"><Calendar size={16} /></span>
+                <input type="date" className="form-control bg-light border-start-0 shadow-none" value={range.to} onChange={(e) => setRange({ ...range, to: e.target.value })} />
+              </div>
             </div>
-            <button className="btn btn-primary btn-sm d-flex align-items-center gap-1" onClick={() => fetchData()} disabled={loading}>
-              {loading ? "..." : <><Search size={16} /> Search</>}
+            <div className="col-md-2">
+              <button className="btn btn-primary fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm" style={{width:184}} onClick={() => fetchData()} disabled={loading}>
+                {loading ? "Loading..." : <><Search size={18} /> Search</>}
+              </button>
+            </div>
+            <div className="col-md-2">
+              <button className="btn btn-success fw-bold d-flex align-items-center gap-2 shadow-sm" onClick={downloadFullReport}>
+              <Download size={18} /> Download Report
             </button>
-            <button className="btn btn-dark btn-sm d-flex align-items-center gap-1" onClick={downloadFullReport}>
-              <Download size={16} /> Report
-            </button>
+            </div>
           </div>
         </div>
 
