@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/loading_img.png";
 import { BounceLoader } from "react-spinners";
+import { Helmet } from "react-helmet-async";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ export default function ForgotPassword() {
       } else {
         toast.error("Failed to send reset email. Please try again.");
       }
-      setLoading(false); // Only stop loading if there is an error
+      setLoading(false);
     }
   };
 
@@ -56,50 +57,55 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="container d-flex justify-content-center align-items-center pt-5">
-      <ToastContainer position="top-center" autoClose={3000} />
+    <>
+      <Helmet>
+        <title>City Parking | Forgot Password</title>
+      </Helmet>
+      <div className="container d-flex justify-content-center align-items-center pt-5">
+        <ToastContainer position="top-center" autoClose={3000} />
 
-      <div className="p-4 rounded-4 border-0" style={{ maxWidth: "450px", width: "100%" }}>
-        <div className="px-2">
-          <div className="text-center mb-4">
-            <h2 style={{ fontFamily: 'serif', fontStyle: 'italic' }}>Forgot Password?</h2>
-            <img src={logo} alt="City Parking" className="img-fluid my-4" style={{ width: "200px" }} />
-            <p className="text-muted small">Enter your email to receive a password reset link.</p>
-          </div>
-
-          <form onSubmit={reset}>
-            <div className="mb-4">
-              <label className="form-label fw-bold">Enter your Email</label>
-              <input
-                type="email"
-                className="form-control form-control-lg border shadow-sm"
-                placeholder="name@example.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                disabled={loading}
-              />
+        <div className="p-4 rounded-4 border-0" style={{ maxWidth: "450px", width: "100%" }}>
+          <div className="px-2">
+            <div className="text-center mb-4">
+            <h3 className="fw-bold mb-2">Forgot Password?</h3>
+            <img src={logo} alt="Logo" style={{ width: "150px" }} className="mb-3" />
+              <p className="text-muted small">Enter your email to receive a password reset link.</p>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn btn-primary w-100 rounded-3 fw-bold py-2 shadow-sm d-flex justify-content-center align-items-center gap-2"
-            >
-              {loading ? "Processing..." : "Send Reset Link"}
-            </button>
-          </form>
+            <form onSubmit={reset}>
+              <div className="mb-4">
+                <label className="form-label fw-bold">Enter your Email</label>
+                <input
+                  type="email"
+                  className="form-control form-control-lg border shadow-sm"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              </div>
 
-          <div className="text-center mt-4">
-            <button
-              onClick={() => navigate("/login")}
-              className="btn btn-link text-decoration-none small text-muted"
-            >
-              Back to Login
-            </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn btn-primary w-100 rounded-3 fw-bold py-2 shadow-sm d-flex justify-content-center align-items-center gap-2"
+              >
+                {loading ? "Processing..." : "Send Reset Link"}
+              </button>
+            </form>
+
+            <div className="text-center mt-4">
+              <button
+                onClick={() => navigate("/login")}
+                className="btn btn-link text-decoration-none small text-muted"
+              >
+                Back to Login
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
