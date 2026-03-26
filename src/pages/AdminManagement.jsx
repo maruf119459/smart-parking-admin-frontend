@@ -10,8 +10,16 @@ import { BounceLoader } from "react-spinners";
 import { io } from "socket.io-client";
 import { Helmet } from "react-helmet-async";
 
+const BASE_URL = "https://smart-parking-backend-u47b.onrender.com";
 // Initialize socket 
-const socket = io("http://localhost:5000");
+const socket = io("https://smart-parking-backend-u47b.onrender.com", {
+  transports: ["websocket", "polling"],
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 2000,
+  timeout: 10000,
+  withCredentials: true
+});
 
 export default function AdminManagement() {
   const [admins, setAdmins] = useState([]);
@@ -32,7 +40,7 @@ export default function AdminManagement() {
 
   const fetchAdmins = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/admin");
+      const res = await axios.get(`${BASE_URL}/api/admin`);
       setAdmins(res.data);
     } catch (err) {
       toast.error("Failed to load admin list");
@@ -59,7 +67,7 @@ export default function AdminManagement() {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/admin", form);
+      await axios.post(`${BASE_URL}/api/admin`, form);
       toast.success("Admin authorized successfully");
       setForm({ name: "", email: "", phone: "" });
       fetchAdmins();
@@ -89,7 +97,7 @@ export default function AdminManagement() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:5000/api/admin/${id}`);
+          await axios.delete(`${BASE_URL}/api/admin/${id}`);
           toast.success("Admin removed successfully");
           fetchAdmins();
         } catch (err) {

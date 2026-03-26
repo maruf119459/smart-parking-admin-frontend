@@ -28,6 +28,8 @@ export default function Register() {
   const [agreed, setAgreed] = useState(false);
   const [passStrength, setPassStrength] = useState(0);
 
+  const BASE_URL = "https://smart-parking-backend-u47b.onrender.com";
+
   useEffect(() => {
     const timer = setTimeout(() => setInitialPageLoad(false), 1000);
     fetchTerms();
@@ -36,7 +38,7 @@ export default function Register() {
 
   const fetchTerms = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/terms-and-conditions");
+      const res = await axios.get(`${BASE_URL}/api/terms-and-conditions`);
       setTerms(res.data.sort((a, b) => a.sl - b.sl));
     } catch (err) {
       console.error("Error fetching terms", err);
@@ -61,7 +63,7 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5000/api/admin/search/${encodeURIComponent(email.trim())}`);
+      const res = await axios.get(`${BASE_URL}/api/admin/search/${encodeURIComponent(email.trim())}`);
       if (res.data.exists) {
         setStep(2);
       } else {
@@ -91,7 +93,7 @@ export default function Register() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const firebaseUid = userCredential.user.uid;
 
-      await axios.patch("http://localhost:5000/api/admin/update-by-email", {
+      await axios.patch(`${BASE_URL}/api/admin/update-by-email`, {
         email,
         firebaseUid
       });

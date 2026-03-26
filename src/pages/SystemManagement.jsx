@@ -11,7 +11,7 @@ import logo from "../assets/loading_img.png";
 import { BounceLoader } from "react-spinners";
 import { Helmet } from "react-helmet-async";
 
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = "https://smart-parking-backend-u47b.onrender.com";
 const ITEMS_PER_PAGE = 10;
 
 export default function SystemManagement() {

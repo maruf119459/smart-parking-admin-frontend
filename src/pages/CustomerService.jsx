@@ -16,6 +16,7 @@ export default function CustomerService() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [initialPageLoad, setInitialPageLoad] = useState(true);
+  const BASE_URL = "https://smart-parking-backend-u47b.onrender.com";
 
   useEffect(() => {
     const timer = setTimeout(() => setInitialPageLoad(false), 1000);
@@ -28,7 +29,7 @@ export default function CustomerService() {
     try {
       setLoading(true);
       const res = await axios.get(
-        "http://localhost:5000/api/customer-service/search",
+        `${BASE_URL}/api/customer-service/search`,
         { params: { email, from, to } }
       );
       setResults(res.data);

@@ -12,7 +12,8 @@ import { BounceLoader } from "react-spinners";
 import { Helmet } from "react-helmet-async";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#82ca9d"];
-const BASE_URL = "http://localhost:5000/api/admin/analytics";
+const BASE_URL = "https://smart-parking-backend-u47b.onrender.com";
+const URL = `${BASE_URL}/api/admin/analytics`;
 
 export default function InteractiveDashboard() {
   const getFormattedDate = (date) => date.toISOString().split("T")[0];
@@ -43,16 +44,16 @@ export default function InteractiveDashboard() {
 
     try {
       const [u, r, ps, iv, ph, sl, pm, pst, tc, sm] = await Promise.all([
-        axios.get(`${BASE_URL}/users`, { params }),
-        axios.get(`${BASE_URL}/revenue`, { params }),
-        axios.get(`${BASE_URL}/parking-status`, { params }),
-        axios.get(`${BASE_URL}/income-by-vehicle`, { params }),
-        axios.get(`${BASE_URL}/peak-hours`, { params }),
-        axios.get(`${BASE_URL}/popular-slots`, { params }),
-        axios.get(`${BASE_URL}/payment-methods`, { params }),
-        axios.get(`${BASE_URL}/payment-stats`, { params }),
-        axios.get(`${BASE_URL}/top-customers`, { params }),
-        axios.get(`${BASE_URL}/summary`, { params })
+        axios.get(`${URL}/users`, { params }),
+        axios.get(`${URL}/revenue`, { params }),
+        axios.get(`${URL}/parking-status`, { params }),
+        axios.get(`${URL}/income-by-vehicle`, { params }),
+        axios.get(`${URL}/peak-hours`, { params }),
+        axios.get(`${URL}/popular-slots`, { params }),
+        axios.get(`${URL}/payment-methods`, { params }),
+        axios.get(`${URL}/payment-stats`, { params }),
+        axios.get(`${URL}/top-customers`, { params }),
+        axios.get(`${URL}/summary`, { params })
       ]);
 
       setData({
