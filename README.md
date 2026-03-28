@@ -193,6 +193,33 @@ echo REACT_APP_BACKEND_URL=your_backend_url >> .env
 npm start
 ```
 
+
+---
+
+## 🗂️ Other Repositories
+
+**👉 User Frontend Github**
+  [Click Here](https://github.com/maruf119459/smart-parking-frontend.git)
+
+**👉 Backend Github**
+  [Click Here](https://github.com/maruf119459/smart-parking-backend.git)
+
+---
+
+## 🔗 Other Important Links
+
+**👉 User Frontend Live Link**
+  [Click Here](https://city-parking.onrender.com)
+
+**👉 User APK**
+  [Click Here](https://github.com/maruf119459/smart-parking-frontend/releases/download/v1.0.0/cityParking.apk)
+
+**👉 Admin Frontend Link**
+  [Click Here](https://city-parking-admin.onrender.com)
+
+**👉 Admin Desktop Application .exe**
+  [Click Here](https://github.com/maruf119459/smart-parking-admin-frontend/releases/download/v1.0.0/City_Parking_Admin_Setup_0.1.0.exe)
+
 ---
 
 ## 🛡️ License
