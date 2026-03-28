@@ -1,70 +1,209 @@
-# Getting Started with Create React App
+# <img src="src/assets/loading_img.png" alt="logo" width="120"/>  City Parking Admin
+**City Parking Admin** is a high-performance, cross-platform management hub built for modern smart parking systems. It seamlessly combines web accessibility with desktop-level power, enabling administrators to monitor parking operations, manage users, and analyze real-time data efficiently.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Built with React, Node.js, Electron, and Socket.IO, the system ensures real-time IoT synchronization, secure authentication, and powerful business tools for smart city environments.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🌐 Project Links
 
-### `npm start`
+**👉 Live Web Application:**
+  [https://city-parking-admin.onrender.com](https://city-parking-admin.onrender.com)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+**👉 Desktop Application (.exe):** [Click here to download the exe file](https://github.com/maruf119459/smart-parking-admin-frontend/releases/download/v1.0.0/City_Parking_Admin_Setup_0.1.0.exe)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🎉 Happy Announcement
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+We are excited to announce the official release of the **City Parking Admin Desktop Application** 🎉
 
-### `npm run build`
+This Electron-powered application provides a native Windows experience with:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* Multi-step professional NSIS installer
+* Smooth installation workflow
+* Desktop shortcut & executable access
+* Optimized performance for real-time monitoring
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📸 Photo Gallery
 
-### `npm run eject`
+### 🖥️ Web Application Interface
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### 🔐 Admin Authorization Step
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+![Admin Authorization](photoGallery/web_img/authorizes_admin_step.png)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### 🔑 Password Setup Page
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+![Password Setup](photoGallery/web_img/web_admin_password_set.png)
 
-## Learn More
+#### 🔓 Login Page
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+![Login Page](photoGallery/web_img/web_admin_login.png)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### 🔁 Forgot Password Page
 
-### Code Splitting
+![Forgot Password](photoGallery/web_img/web_forgot_password.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### 📊 Dashboard Overview
 
-### Analyzing the Bundle Size
+![Dashboard](photoGallery/web_img/web_admin_dashboard.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### 👥 Admin Management
 
-### Making a Progressive Web App
+![Admin Management](photoGallery/web_img/web_admin_management.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### ⚙️ System Management
 
-### Advanced Configuration
+![System Management](photoGallery/web_img/web_system_management.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+#### 💬 Customer Service Portal
 
-### Deployment
+![Customer Service](photoGallery/web_img/web_customer.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+### 📦 Desktop Software(exe) Application Interface
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+#### 📦 Executable File
+
+![Exe File](photoGallery/software_img/software_exe.png)
+
+#### ⚙️ Installation Options
+
+![Installation Options](photoGallery/software_img/choose_installation_options.png)
+
+#### 📜 License Agreement
+
+![License](photoGallery/software_img/license_agrement.png)
+
+#### 📁 Install Location Selection
+
+![Install Location](photoGallery/software_img/choose_install_location.png)
+
+#### ⏳ Installation Progress
+
+![Installing](photoGallery/software_img/installing_ongoing.png)
+
+#### ✅ Setup Completion
+
+![Setup Complete](photoGallery/software_img/complete_setup.png)
+![Installed Software](photoGallery/software_img/installed_software.png)
+
+#### 🖥️ Desktop Shortcut
+
+![Shortcut](photoGallery/software_img/software_shortcut.png)
+
+#### 🔐 Admin Authorization Step
+
+![Admin Authorization](photoGallery/software_img/authorize_step_admin_sign_up.png)
+
+#### 🔑 Password Setup Page
+
+![Password Setup](photoGallery/software_img/admin_sign_up_password_set.png)
+
+#### 🔓 Login Page
+
+![Login Page](photoGallery/software_img/admin_login.png)
+
+#### 🔁 Forgot Password Page
+
+![Forgot Password](photoGallery/software_img/forgot_password.png)
+
+#### 📊 Dashboard Overview
+
+![Dashboard](photoGallery/software_img/admin_dashboard.png)
+
+#### 👥 Admin Management
+
+![Admin Management](photoGallery/software_img/admin_management.png)
+
+#### ⚙️ System Management
+
+![System Management](photoGallery/software_img/system_configuration.png)
+
+#### 💬 Customer Service Portal
+
+![Customer Service](photoGallery/software_img/customer_service_portal.png)
+
+#### ⚙️ Unistall Software
+
+![Uninstall Software](photoGallery/software_img/unistall_process.png)
+
+
+---
+
+## 🚀 Features
+
+* **Real-Time Monitoring:** Live parking stall tracking via Socket.IO
+* **Cross-Platform:** Accessible via Web & Desktop 
+* **Secure Authentication:** Firebase-based multi-step admin verification
+* **Automated Reporting:** Export parking data in PDF/CSV formats
+* **IoT Integration:** ESP32-based smart hardware synchronization
+* **Customer Support:** Built-in service portal
+* **Payment Integration:** SSLCommerz gateway monitoring
+
+---
+
+## 🛠️ Tech Stack
+
+* **Frontend:** React.js, Bootstrap 
+* **Backend:** Node.js, Express.js
+* **Desktop:** Electron.js, NSIS Installer
+* **Real-Time:** Socket.IO
+* **Database & Auth:** Firebase, MongoDB
+
+---
+
+## 🌐 Deployment (Web)
+
+The web application is deployed on **Render** with Continuous Deployment enabled.
+Every push to the main branch automatically updates the live application.
+
+---
+
+## 🔧 Installation & Setup (Web Only)
+
+### 1. Clone the repository:
+
+```bash
+git clone https://github.com/maruf119459/smart-parking-admin-frontend.git
+cd smart-parking-admin-frontend
+```
+
+### 2. Install dependencies:
+
+```bash
+npm install
+```
+
+### 3. Create `.env` file:
+
+```bash
+echo REACT_APP_FIREBASE_API_KEY=your_api_key > .env
+echo REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain >> .env
+echo REACT_APP_BACKEND_URL=your_backend_url >> .env
+```
+
+### 4. Run the app:
+
+```bash
+npm start
+```
+
+---
+
+## 🛡️ License
+
+Distributed under the MIT License.
+See `LICENSE` for more information.
+
+---
+
+## 👨‍💻 Developers
+
+Developed with ❤️ by [Md. Mohiuddin Maruf](https://github.com/maruf119459) & [Abrarul Haque](https://github.com/Abrarul-Haque1303)
+
+---
