@@ -16,7 +16,7 @@ export default function CustomerService() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [initialPageLoad, setInitialPageLoad] = useState(true);
-  const BASE_URL = "https://smart-parking-backend-u47b.onrender.com";
+  const BASE_URL = "https://city-parking-backend.onrender.com";
 
   useEffect(() => {
     const timer = setTimeout(() => setInitialPageLoad(false), 1000);

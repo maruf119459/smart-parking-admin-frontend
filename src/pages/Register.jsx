@@ -28,7 +28,7 @@ export default function Register() {
   const [agreed, setAgreed] = useState(false);
   const [passStrength, setPassStrength] = useState(0);
 
-  const BASE_URL = "https://smart-parking-backend-u47b.onrender.com";
+  const BASE_URL = "https://city-parking-backend.onrender.com";
 
   useEffect(() => {
     const timer = setTimeout(() => setInitialPageLoad(false), 1000);

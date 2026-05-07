@@ -10,9 +10,9 @@ import { BounceLoader } from "react-spinners";
 import { io } from "socket.io-client";
 import { Helmet } from "react-helmet-async";
 
-const BASE_URL = "https://smart-parking-backend-u47b.onrender.com";
+const BASE_URL = "https://city-parking-backend.onrender.com";
 // Initialize socket 
-const socket = io("https://smart-parking-backend-u47b.onrender.com", {
+const socket = io("https://city-parking-backend.onrender.com", {
   transports: ["websocket", "polling"],
   reconnection: true,
   reconnectionAttempts: 5,

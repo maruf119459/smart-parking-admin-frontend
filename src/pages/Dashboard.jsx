@@ -12,7 +12,7 @@ import { BounceLoader } from "react-spinners";
 import { Helmet } from "react-helmet-async";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#82ca9d"];
-const BASE_URL = "https://smart-parking-backend-u47b.onrender.com";
+const BASE_URL = "https://city-parking-backend.onrender.com";
 const URL = `${BASE_URL}/api/admin/analytics`;
 
 export default function InteractiveDashboard() {
